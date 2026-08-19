@@ -1,0 +1,25 @@
+# Secrets — NEVER commit real credentials
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Streamlit
+.streamlit/secrets.toml
+!.streamlit/secrets.toml.example
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+
+# Uploaded/generated files (kept local, not versioned)
+assets/logo_factory_*.png
+*.xlsx
+!import_template_sample.xlsx

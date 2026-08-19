@@ -1,0 +1,11 @@
+# حساس معلومات
+.env
+*.env
+
+# پائتھون کی فالتو فائلیں (Caches)
+__pycache__/
+*.py[cod]
+
+# Streamlit اور VS Code کی سیٹنگز
+.vscode/
+.streamlit/secrets.toml

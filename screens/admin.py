@@ -175,7 +175,7 @@ def _location_management():
 def _defect_code_management():
     st.subheader("🏷️ Defect Code Management / ڈیفیکٹ کوڈز")
     factory_id = st.session_state["factory_id"]
-    department = st.selectbox("Department", ["cutting", "stitching", "checking", "packing"], key="dcm_dept")
+   st.selectbox("Department", ["cutting", "stitching", "checking", "knitting", "dyeing", "packing"], key="dcm_dept")
 
     with get_session() as db:
         codes = (

@@ -1,26 +1,7 @@
 """
 screens/data_entry.py
 ----------------------
-The floor-level form. Covers all 4 departments (Cutting / Stitching /
-Checking / Packing) in one screen via a department selector, since they
-share the same core columns. Department-specific fields are collected
-into `extra` (JSON) so nothing needs a schema change later.
-
-Smart Auto-Fill: Article Number lives OUTSIDE the st.form (forms only
-submit/rerun on their own button, so a field inside one can't reactively
-trigger a lookup as you type). Typing an Article Number and pressing
-Enter/Tab reruns the script; we look it up in ArticleMaster and, if found,
-use its saved Item/Color/Size/Lot No/GSM as the *default* values for the
-matching fields inside the form below. Lot No and GSM stay fully editable
-— the auto-fill only pre-populates, it never locks the field. On submit,
-whatever was actually entered gets saved back into ArticleMaster, so the
-next entry for that Article Number is even more up to date.
-
-Offline behavior: Streamlit itself needs connectivity to run, but the
-"queue" concept from the spec (save to phone memory, Sync Now button) is
-implemented here as a local pending-queue in st.session_state — if the DB
-write fails (e.g. transient network blip to the Postgres host), the entry
-is kept in the queue and a "🔄 Sync Now" button retries all queued items.
+The floor-level form. Covers all departments in one screen via a department selector.
 """
 
 import datetime as dt
@@ -39,8 +20,8 @@ DEPARTMENTS = {
     "cutting": "Cutting / کٹنگ",
     "stitching": "Inline Stitching / سلائی",
     "checking": "Checking / چیکنگ",
-    "knitting": "Knitting / کننگ",
-    "dyeing": "Dyeing /ڈیینگ",
+    "knitting": "Knitting / کنٹنگ",
+    "dyeing": "Dyeing / ڈائینگ",
     "packing": "Packing / پیکنگ",
 }
 
@@ -167,7 +148,7 @@ def _save_report(payload: dict, mark_synced: bool = True):
             synced=mark_synced,
         )
         db.add(report)
-        db.flush()  # get report.id before commit
+        db.flush()
 
         for code_id, qty, severity in payload["defect_lines"]:
             if qty and qty > 0:
@@ -177,7 +158,7 @@ def _save_report(payload: dict, mark_synced: bool = True):
                 ))
         db.commit()
         log_audit(payload["created_by"], "create", "inspection_reports", report.id,
-                   new_value={"department": payload["department"], "status": str(payload["status"])})
+                  new_value={"department": payload["department"], "status": str(payload["status"])})
         return report.id
 
 
@@ -219,12 +200,9 @@ def render():
 
     if not hall_options:
         st.warning("No halls set up yet. Ask your Admin to add Destination → Unit → Hall first. / "
-                    "ابھی کوئی ہال سیٹ نہیں کیا گیا، پہلے ایڈمن سے ڈسٹینیشن → یونٹ → ہال شامل کروائیں۔")
+                   "ابھی کوئی ہال سیٹ نہیں کیا گیا، پہلے ایڈمن سے ڈسٹینیشن → یونٹ → ہال شامل کروائیں۔")
         return
 
-    # --- Article Number lives OUTSIDE the form so we can react to it and
-    # auto-fill the fields below (a widget inside st.form only "fires" on
-    # the form's own submit button, so lookup has to happen before the form).
     article_number = st.text_input(
         "Article Number / آرٹیکل نمبر",
         key="de_article_number",
@@ -237,9 +215,6 @@ def render():
     elif article_number:
         st.caption("ℹ️ New Article Number — specs will be saved after you submit, for next time.")
 
-    # --- Brand also lives OUTSIDE the form so picking "Add New Brand"
-    # immediately reveals the custom text input (a form only reruns on its
-    # own submit button, so this couldn't react inside the form).
     brand_options = _get_brand_options(factory_id) + [ADD_NEW_BRAND_OPTION]
     brand_choice = st.selectbox("Brand / برانڈ", brand_options, key="de_brand_choice")
     if brand_choice == ADD_NEW_BRAND_OPTION:
@@ -270,7 +245,7 @@ def render():
         total_inspected = st.number_input("Total Bundle Pcs", min_value=0, step=1)
         sample_size = st.number_input("Sample Size (leave 0 to auto-calc from AQL table)", min_value=0, step=1)
 
-st.markdown("**Department-specific fields**")
+        st.markdown("**Department-specific fields**")
         extra = {"lot_no": lot_no, "gsm": gsm}
         if department == "cutting":
             e1, e2 = st.columns(2)
@@ -323,7 +298,7 @@ st.markdown("**Department-specific fields**")
 
         aql_result = evaluate_lot(
             lot_size=max(total_inspected, 1),
-            major_defects=major_count + critical_count,  # critical treated at least as strict as major
+            major_defects=major_count + critical_count,
             minor_defects=minor_count,
         )
         status = LotStatus.PASS if aql_result.status == "PASS" and critical_count == 0 else LotStatus.FAIL
@@ -356,13 +331,11 @@ st.markdown("**Department-specific fields**")
         }
 
         if photo is not None:
-            _compress_image(photo)  # compressed bytes would be uploaded to object storage in production
+            _compress_image(photo)
 
         try:
             report_id = _save_report(payload, mark_synced=True)
-            # Remember this Article Number's specs for next time (auto-fill).
             _upsert_article(factory_id, article_number, item, color, size, lot_no, gsm)
-            # Remember a newly typed custom brand so it appears in the dropdown next time.
             _save_custom_brand(factory_id, brand)
             st.success(f"Saved ✅ Report #{report_id} — Lot Status: **{status.value.upper()}** "
                        f"({aql_result.reason})")

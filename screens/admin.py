@@ -9,7 +9,7 @@ import streamlit as st
 
 from auth import require_access, log_audit
 from database import (
-    get_session, User, Role, Factory, Destination, Unit, Hall,
+    get_session, User, Factory, Destination, Unit, Hall,
     DefectCode, AuditLog, InspectionReport, InspectionDefectEntry
 )
 from utils.pdf_generator import build_report_pdf
@@ -25,7 +25,7 @@ def _user_management():
             {
                 "ID": u.id,
                 "Username": u.username,
-                "Role": u.role.value if hasattr(u.role, 'value') else u.role,
+                "Role": u.role,
                 "Active": u.is_active,
             }
             for u in users
@@ -36,7 +36,7 @@ def _user_management():
         with st.form("add_user_form"):
             new_username = st.text_input("Username")
             new_password = st.text_input("Password", type="password")
-            new_role = st.selectbox("Role", [Role.INSPECTOR.value, Role.ADMIN.value])
+            new_role = st.selectbox("Role", ["inspector", "admin", "main_admin"])
             submitted = st.form_submit_button("Create User / یوزر بنائیں")
 
             if submitted:
@@ -52,7 +52,7 @@ def _user_management():
                             u = User(
                                 username=new_username,
                                 password_hash=hash_password(new_password),
-                                role=Role(new_role),
+                                role=new_role,
                                 factory_id=factory_id,
                                 is_active=True,
                             )
@@ -150,7 +150,7 @@ def _defect_code_management():
                 "ID": c.id,
                 "Code": c.code,
                 "Label": c.label,
-                "Severity": c.default_severity.value if hasattr(c.default_severity, 'value') else c.default_severity,
+                "Severity": str(c.default_severity.value if hasattr(c.default_severity, 'value') else c.default_severity),
                 "Active": c.is_active,
             }
             for c in codes
@@ -172,7 +172,7 @@ def _defect_code_management():
                         department=department,
                         code=code.upper(),
                         label=label,
-                        default_severity=SeverityLevel(severity),
+                        default_severity=SeverityLevel(severity) if hasattr(SeverityLevel, 'minor') else severity,
                         is_active=True,
                     )
                     db.add(dc)

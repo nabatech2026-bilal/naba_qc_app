@@ -39,6 +39,8 @@ DEPARTMENTS = {
     "cutting": "Cutting / کٹنگ",
     "stitching": "Inline Stitching / سلائی",
     "checking": "Checking / چیکنگ",
+    "knitting": "Knitting / کننگ",
+    "dyeing": "Dyeing /ڈیینگ",
     "packing": "Packing / پیکنگ",
 }
 
@@ -268,7 +270,7 @@ def render():
         total_inspected = st.number_input("Total Bundle Pcs", min_value=0, step=1)
         sample_size = st.number_input("Sample Size (leave 0 to auto-calc from AQL table)", min_value=0, step=1)
 
-        st.markdown("**Department-specific fields**")
+st.markdown("**Department-specific fields**")
         extra = {"lot_no": lot_no, "gsm": gsm}
         if department == "cutting":
             e1, e2 = st.columns(2)
@@ -282,6 +284,14 @@ def render():
             extra["checker_no"] = st.text_input("Checker #")
         elif department == "packing":
             extra["table_no"] = st.text_input("Table No")
+        elif department == "knitting":
+            e1, e2 = st.columns(2)
+            extra["machine_no"] = e1.text_input("Knitting Machine No")
+            extra["gauge"] = e2.text_input("Gauge / GG")
+        elif department == "dyeing":
+            e1, e2 = st.columns(2)
+            extra["vessel_no"] = e1.text_input("Vessel / Batch No")
+            extra["recipe_no"] = e2.text_input("Recipe No")
 
         st.markdown("**Defects found (enter quantity per code)**")
         defect_qty = {}

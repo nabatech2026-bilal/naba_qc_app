@@ -82,6 +82,8 @@ class Department(str, enum.Enum):
     STITCHING = "stitching"          # inline stitching
     CHECKING = "checking"
     PACKING = "packing"
+    KNITTING = "knitting"
+    DYEING = "dyeing"                # Dyeing / Processing
 
 
 class LotStatus(str, enum.Enum):

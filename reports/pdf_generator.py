@@ -24,6 +24,8 @@ DEPARTMENT_TITLES = {
     "stitching": "Daily Inline Stitching Inspection Report",
     "checking": "Daily Checking Inspection Report",
     "packing": "Daily Packing (Pre Final) Inspection Report",
+    "knitting": "Knitting Analysis Report",
+    "dyeing": "Processing Report",
 }
 
 

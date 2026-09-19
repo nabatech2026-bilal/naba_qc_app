@@ -124,6 +124,38 @@ DEFAULT_DEFECT_CODES = {
         ("Wrong Assortment", Severity.CRITICAL),
         ("Focal / Motive Point Out", Severity.MINOR),
     ],
+    "knitting": [
+        # From "Knitting Analysis Report" (KNT-QCD-F07) inspection findings columns
+        ("Knit Line", Severity.MAJOR),
+        ("Darning", Severity.MINOR),
+        ("Knots", Severity.MINOR),
+        ("Cut", Severity.CRITICAL),
+        ("Hole", Severity.CRITICAL),
+        ("Oil Stain", Severity.MINOR),
+        ("Other", Severity.MINOR),
+    ],
+    "dyeing": [
+        # From "Processing Report" (KNT-QCD-F05) defective summary detail
+        ("Knitting Line", Severity.MAJOR),
+        ("Cut", Severity.CRITICAL),
+        ("Hole", Severity.CRITICAL),
+        ("Uneven Slitting", Severity.MAJOR),
+        ("Uneven Dyeing", Severity.MAJOR),
+        ("Dyeing Patch", Severity.MAJOR),
+        ("Stain / Spot", Severity.MINOR),
+        ("Softener Mark", Severity.MINOR),
+        ("Shade Variation", Severity.MAJOR),
+        ("Oil Stain", Severity.MINOR),
+        ("Spot", Severity.MINOR),
+        ("Patta / Streak", Severity.MAJOR),
+        ("Compacting Hole", Severity.CRITICAL),
+        ("Compaction / Press Mark", Severity.MINOR),
+        ("Improper Shrinkage", Severity.MAJOR),
+        ("Crease Mark", Severity.MINOR),
+        ("Bowing", Severity.MINOR),
+        ("Brush Problem", Severity.MINOR),
+        ("Uneven Hairiness / Raising", Severity.MINOR),
+    ],
 }
 
 

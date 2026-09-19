@@ -81,7 +81,7 @@ def render():
         date_from = c1.date_input("From", value=today - dt.timedelta(days=30))
         date_to = c1.date_input("To", value=today)
 
-    department = c2.selectbox("Department", ["All", "cutting", "stitching", "checking", "packing"])
+    department = c2.selectbox("Department", ["All", "cutting", "stitching", "checking", "packing", "knitting", "dyeing"])
     hall_id = c3.selectbox("Hall", list(hall_options.keys()), format_func=lambda h: hall_options[h])
     c4.write("")  # spacer
 

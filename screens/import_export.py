@@ -18,7 +18,7 @@ import streamlit as st
 from auth import require_access
 from utils.import_export import export_reports_to_excel, build_import_template, import_reports_from_file
 
-DEPARTMENTS = ["cutting", "stitching", "checking", "packing"]
+DEPARTMENTS = ["cutting", "stitching", "checking", "packing", "knitting", "dyeing"]
 
 
 def render():
